@@ -78,7 +78,6 @@ function App() {
               {
                 level: 1,
                 colorByPoint: true,
-                layoutAlgorithm: "sliceAndDice",
                 borderWidth: 6,
                 levelIsConstant: false,
                 dataLabels: {
