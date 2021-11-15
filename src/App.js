@@ -65,14 +65,6 @@ function App() {
       }
 
       const options = {
-        plotOptions: {
-          series: {
-            // general options for all series
-          },
-          treemap: {
-            //colorByPoint: true,
-          },
-        },
         title: {
           text: undefined,
         },
@@ -88,25 +80,10 @@ function App() {
                 colorByPoint: true,
                 layoutAlgorithm: "sliceAndDice",
                 borderWidth: 6,
+                levelIsConstant: false,
                 dataLabels: {
                   enabled: true,
                   align: "left",
-                  verticalAlign: "top",
-                  style: {
-                    fontSize: "18px",
-                    fontWeight: "bold",
-                  },
-                },
-              },
-              
-              {
-                level: 2,
-                colorByPoint: true,
-                layoutAlgorithm: "sliceAndDice",
-                borderWidth: 3,
-                dataLabels: {
-                  enabled: true,
-                  align: "right",
                   verticalAlign: "top",
                   style: {
                     fontSize: "14px",
@@ -114,11 +91,13 @@ function App() {
                   },
                 },
               },
-              
             ],
             type: "treemap",
             allowDrillToNode: true,
             layoutAlgorithm: "squarified",
+            dataLabels: {
+              enabled: true,
+            },
             data: data,
           },
         ],
