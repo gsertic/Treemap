@@ -72,6 +72,11 @@ function App() {
           height: window.innerHeight,
           backgroundColor: "transparent",
         },
+        plotOptions: {
+          series: {
+              animation: false
+          }
+        },
         series: [
           {
             levels: [
