@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="viz" style="height: 100%; width: 100%"></div>
+  </body>
+
+  <script type="module">
+    import * as d3 from "d3-format";
+    import { useRef } from "react";
+    import * as ReactDOM from "react-dom";
+    import Highcharts from "highcharts";
+    import HighchartsReact from "highcharts-react-official";
+    import addTreemapModule from "highcharts/modules/treemap";
+    import { client, useConfig, useElementColumns, useElementData } from "@sigmacomputing/plugin";
+
+    client.config.configureEditorPanel([
+      { name: "source", type: "element" },
+      {
+        name: "dimensions",
+        type: "column",
+        source: "source",
+        allowMultiple: true,
+      },
+      {
+        name: "measure",
+        type: "column",
+        source: "source",
+        allowMultiple: false,
+        allowTypes: "number",
+      },
+    ]);
+
+    addTreemapModule(Highcharts);
+
+    function App() {
+      console.log("refresh");
+      const config = useConfig();
+      const colData = useElementColumns(config.source);
+      const sigmaData = useElementData(config.source);
+      const ref = useRef();
+
+      const dimensions = config.dimensions || [];
+      const measure = config.measure;
+
+      // transform sigmaData --> treemap data
+      let dataMap = [];
+      const delim = "__";
+      function getParent(i, j) {
+        if (i > 0) {
+          return getId(i - 1, j);
+        } else {
+          return undefined;
+        }
+      }
+      function getId(i, j) {
+        const parent = getParent(i, j);
+        let id = "";
+        if (parent) {
+          id = parent + delim;
+        }
+        id += dimensions[i] + delim + sigmaData[dimensions[i]][j];
+        return id;
+      }
+
+      if (
+        dimensions &&
+        measure &&
+        sigmaData[dimensions[0]] &&
+        sigmaData[measure]
+      ) {
+        for (let i = 0; i < dimensions.length; i++) {
+          for (let j = 0; j < sigmaData[dimensions[i]].length; j++) {
+            const name = sigmaData[dimensions[i]][j];
+            const value = sigmaData[measure][j];
+            const id = getId(i, j);
+            const parent = getParent(i, j);
+            const dataPoint = {
+              id,
+              name,
+              value: (dataMap[id]?.value || 0) + value,
+              ...(parent && { parent }),
+            };
+            dataMap[id] = dataPoint;
+          }
+        }
+      }
+      // convert object map to array
+      let data = [];
+      let i = 0;
+      for (var key in dataMap) {
+        data[i] = dataMap[key];
+        i++;
+      }
+
+      let measureformat = colData[measure]?.format?.format;
+      let valueFormatter = measureformat ? d3.format(measureformat) : null;
+
+      const options = {
+        title: {
+          text: undefined,
+        },
+        chart: {
+          height: window.innerHeight,
+          backgroundColor: "transparent",
+        },
+        plotOptions: {
+          series: {
+            animation: false,
+          },
+        },
+        tooltip: {
+          formatter: function () {
+            let f = valueFormatter || ((value) => String(value));
+            return `<b>${this.point.name}</b>: ${f(this.point.value)}`;
+          },
+        },
+        series: [
+          {
+            levels: [
+              {
+                level: 1,
+                colorByPoint: true,
+                borderWidth: 6,
+                levelIsConstant: false,
+                dataLabels: {
+                  enabled: true,
+                  align: "left",
+                  verticalAlign: "top",
+                  style: {
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                  },
+                },
+              },
+            ],
+            type: "treemap",
+            allowDrillToNode: true,
+            layoutAlgorithm: "squarified",
+            dataLabels: {
+              enabled: true,
+            },
+            data: data,
+            name: colData[dimensions[0]]?.name,
+          },
+        ],
+      };
+
+      return (
+        <div>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            ref={ref}
+          />
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("viz"));
+  </script>
+</html>
