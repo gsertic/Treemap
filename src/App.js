@@ -18,8 +18,8 @@ function App() {
   const sigmaData = useElementData(config.source);
   const ref = useRef();
   const options = useMemo(() => {
-    const dimensions = config.dimension;
-    const measures = config.measures;
+    const dimensions = config.dimension || [];
+    const measures = config.measures || [];
 
     // transform sigmaData --> treemap data
     let dataMap = [];
