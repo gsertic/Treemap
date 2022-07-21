@@ -18,8 +18,9 @@ function App() {
   const sigmaData = useElementData(config.source);
   const ref = useRef();
   const options = useMemo(() => {
-    const dimensions = config.dimension || [];
-    const measures = config.measures || [];
+    const dimensions = config.dimension;
+    const measures = config.measures;
+    if (!(dimensions && measures)) return false;
 
     // transform sigmaData --> treemap data
     let dataMap = [];
@@ -112,7 +113,7 @@ function App() {
 
   return (
     <div>
-      <HighchartsReact highcharts={Highcharts} options={options} ref={ref} />
+      {options && <HighchartsReact highcharts={Highcharts} options={options} ref={ref} />}
     </div>
   );
 }
