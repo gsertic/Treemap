@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@sigmacomputing/plugin": "^0.6.55",
+    "@sigmacomputing/plugin": "^1.0.5",
     "d3-format": "^3.1.0",
     "highcharts": "^9.3.1",
     "highcharts-react-official": "^3.1.0",
@@ -18,7 +18,8 @@
     "lint": "prettier -w index.html"
   },
   "devDependencies": {
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "process": "^0.11.10"
   },
   "source": "index.html"
 }

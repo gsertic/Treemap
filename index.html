@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <div id="viz" style="height: 100%; width: 100%"></div>
+    <div id="viz"></div>
   </body>
 
   <script type="module">
@@ -100,7 +100,7 @@
           text: undefined,
         },
         chart: {
-          height: window.innerHeight,
+          // height: window.innerHeight,
           backgroundColor: "transparent",
         },
         plotOptions: {
@@ -152,6 +152,17 @@
             options={options}
             ref={ref}
           />
+          <br/>
+          <br/>
+          <code className="debug">
+            config: { JSON.stringify(config) }
+            <br/>
+            <br/>
+            colData: { JSON.stringify(colData) }
+            <br/>
+            <br/>
+            sigmaData: { JSON.stringify(sigmaData) }
+          </code>
         </div>
       );
     }
